@@ -86,3 +86,62 @@ TensorFlow successfully executed a matrix multiplication on:
 The verified extracted image count is 5,856. The project brief describes the dataset as 5,863 images; this discrepancy has not been investigated yet and will be examined during Stage 1 EDA rather than assumed or silently reconciled.
 
 The original 16-image validation set will not be used for tuning. Patient-level splitting will be performed during Stage 1 to reduce patient-level data leakage risk.
+
+
+### Day 3 — Data Understanding & EDA
+
+**Status:** Core EDA completed.
+
+**Dataset counts**
+
+| Split | Normal | Pneumonia | Total |
+|---|---:|---:|---:|
+| Train | 1,341 | 3,875 | 5,216 |
+| Validation | 8 | 8 | 16 |
+| Test | 234 | 390 | 624 |
+| **Total** | **1,583** | **4,273** | **5,856** |
+
+**Observations**
+- The training data is class-imbalanced, with approximately 2.89 times as many Pneumonia images as Normal images.
+- A visual grid of 16 random training images per class was generated.
+- In a sample of 1,000 training images, 968 were grayscale and 32 were RGB.
+- Image dimensions vary substantially, supporting the need for resizing during preprocessing.
+- Brightness histograms were generated from samples of 100 images per class.
+- All 5,856 files in the expected class folders had recognized image extensions and passed the image-readability check.
+
+**Decisions**
+- Preserve the original 624-image test set.
+- Do not use the original 16-image validation set for model tuning.
+- Record measured results rather than assume expected counts.
+- Keep the screening-aid-only framing.
+
+### Day 4 — Patient Metadata & Original Split Leakage Audit
+
+**Status:** Metadata extraction and original-split overlap audit completed in Colab.
+
+**Verified findings**
+- Total images indexed: 5,856.
+- Unique filename-derived patient identifiers: 3,118.
+- Images with missing parsed identifiers: 0.
+- Patients with more than one image: counted in the metadata analysis.
+- Train–validation identifier overlap: 0.
+- Train–test identifier overlap: 170.
+- Validation–test identifier overlap: 0.
+- Test images whose parsed identifiers also appear in training: 320.
+- Test images whose parsed identifiers do not appear in training: 304.
+
+**Interpretation and limitations**
+- Identifiers were parsed from filenames and are proxies; they have not been independently verified as patient identities.
+- The original split has potential patient-level leakage, particularly between train and test.
+- The 624 original test images remain unchanged. No model training or new split was performed during this audit.
+- The verified dataset count remains 5,856, not the 5,863 stated in the project brief. The discrepancy remains unexplained after EDA and integrity checks.
+
+**Artifacts generated in Colab**
+- `image_metadata.csv`
+- `original_split_patient_overlap.csv`
+- `leakage_audit.md`
+
+These were generated under `/content/chestscan_artifacts/`. They still need to be copied into the appropriate locations in the local repository.
+
+**Next**
+Wait for explicit authorization before beginning Day 5. The next planned stage is a patient-level train/validation split with leakage checks and a `splits.csv` manifest.
