@@ -141,7 +141,44 @@ The original 16-image validation set will not be used for tuning. Patient-level 
 - `original_split_patient_overlap.csv`
 - `leakage_audit.md`
 
-These were generated under `/content/chestscan_artifacts/`. They still need to be copied into the appropriate locations in the local repository.
+These Colab artifacts were used as the basis for the local Day 5 split manifest.
+
+**Outcome**
+Day 5 split creation is documented below.
+### Day 5 — Patient-Level Split Manifest
+
+**Status:** Split manifest generated and validation checks passed locally.
+
+**Verified split counts**
+
+| New split | Normal | Pneumonia | Total |
+|---|---:|---:|---:|
+| Train | 1,147 | 2,912 | 4,059 |
+| Validation | 202 | 514 | 716 |
+| Excluded overlap | 0 | 457 | 457 |
+| Original test | 234 | 390 | 624 |
+| **Total** | **1,583** | **4,273** | **5,856** |
+
+**Decisions and limitations**
+- Preserved all 624 original test images.
+- Labelled 304 test images as `test_clean` and all 624 as `test_full`.
+- Excluded 457 non-test images whose filename-derived identifiers overlap with the original test set.
+- The excluded images are all labelled Pneumonia, changing the class distribution of the eligible training data.
+- Filename-derived identifiers remain unverified proxies for patient identity.
+- The original 16-image validation set is not used for tuning.
+- Training class weights, calculated from the new training split, are `NORMAL: 1.769398` and `PNEUMONIA: 0.696944`.
+- No model training was performed.
+
+**Artifact**
+- `splits.csv` — 5,856 rows, with the required six columns.
+- `scripts/create_splits.py` — split-manifest generation script.
+
+**Validation**
+- All paths are unique.
+- All labels are recognized.
+- The original test set contains exactly 624 images.
+- The clean-test cohort contains exactly 304 images.
+- Leakage assertions passed for the new train/validation/test partitions, using filename-derived identifiers.
 
 **Next**
-Wait for explicit authorization before beginning Day 5. The next planned stage is a patient-level train/validation split with leakage checks and a `splits.csv` manifest.
+Review the final diff and commit the Day 5 artifacts. Do not begin Day 6 without explicit authorization.
