@@ -182,3 +182,24 @@ Day 5 split creation is documented below.
 
 **Next**
 Review the final diff and commit the Day 5 artifacts. Do not begin Day 6 without explicit authorization.
+
+## Day 6 — tf.data Pipeline
+
+### Completed
+- Implemented `src/data.py` with manifest loading and image-path resolution.
+- Decoded JPEG images, converted them to RGB, and resized them to 224x224.
+- Implemented training-only augmentation: rotation, zoom, horizontal flip, brightness, and contrast.
+- Added training shuffle, batching (32), parallel mapping, and prefetching.
+- Built train, validation, test_full, and test_clean datasets.
+- Verified image batches have shape (32, 224, 224, 3), labels have shape (32,), and pixel values are within [0, 255].
+- Visually compared original and augmented images; augmentation was active and images remained recognizable.
+- Confirmed zero filename-derived patient-ID overlap between the new train and validation partitions.
+
+### Limitations
+- Filename-derived IDs are proxies, not verified patient identities.
+- No model has been trained; performance metrics remain unavailable.
+- Augmentation plausibility has only been visually checked on a small sample.
+- ChestScan is a screening aid, not a diagnostic tool.
+
+### Next
+Begin Day 7: implement and train the baseline CNN.
