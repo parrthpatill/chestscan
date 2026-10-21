@@ -1,0 +1,49 @@
+{
+  "model": {
+    "architecture": "MobileNetV2",
+    "experiment": "mobilenetv2_phase2_v1",
+    "checkpoint": "artifacts/models/mobilenetv2_phase2_v1_best.keras",
+    "sha256": "b0df09f82d1352a6b6bd8e875d955b3a04ac95cbefa4c725b661ccaa14ecda10"
+  },
+  "input": {
+    "image_size": [
+      224,
+      224
+    ],
+    "channels": 3,
+    "preprocessing": "embedded_in_model",
+    "preprocessing_range": [
+      -1,
+      1
+    ]
+  },
+  "class_names": {
+    "0": "NORMAL",
+    "1": "PNEUMONIA"
+  },
+  "decision_threshold": 0.905344,
+  "uncertain_band": {
+    "lower": 0.830344,
+    "upper": 0.980344,
+    "selection_data": "validation",
+    "selection_status": "provisional_candidate"
+  },
+  "validation_at_decision_threshold": {
+    "images": 716,
+    "pneumonia_images": 514,
+    "normal_images": 202,
+    "precision_pneumonia": 0.9959,
+    "recall_pneumonia": 0.9514,
+    "true_negatives": 200,
+    "false_positives": 2,
+    "false_negatives": 25,
+    "true_positives": 489
+  },
+  "triage_validation": {
+    "uncertain_images": 28,
+    "coverage_fraction": 0.03910614525139665,
+    "errors_captured": 6,
+    "total_errors": 27,
+    "note": "Candidate band selected using validation data only. It captures 6 of 27 validation errors; further evaluation is required. This is a screening aid, not a diagnostic tool."
+  }
+}

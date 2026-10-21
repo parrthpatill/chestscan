@@ -203,3 +203,161 @@ Review the final diff and commit the Day 5 artifacts. Do not begin Day 6 without
 
 ### Next
 Begin Day 7: implement and train the baseline CNN.
+
+### Day 7 — Baseline CNN
+
+- **Objective:** Build and train a small CNN from scratch.
+- **Dataset:** Existing `splits.csv`; 4,059 training images, 716 validation images, and 624 untouched test images.
+- **Architecture:** Four convolutional layers, global average pooling, dropout, a 64-unit dense layer, and sigmoid output.
+- **Training:** TensorFlow 2.21.0, GPU enabled, seed 42, batch size 32, class weights, and training-only augmentation.
+- **Duration:** 15 epochs.
+- **Best validation AUC:** 0.9820 at epoch 12.
+- **Checkpoint:** `/content/chestscan_artifacts/models/day7_cnn_best.keras`
+- **Training log:** `/content/chestscan_artifacts/day7_training_log.csv`
+- **Pending:** Interpret learning curves, compute validation metrics, and record results in `docs/experiments.md`.
+- **Limitations:** Filename-derived patient IDs are proxies. This model is experimental and is not a medical diagnostic tool.
+
+
+## Day 8 — Baseline CNN evaluation
+
+- Plotted baseline training and validation learning curves.
+- Verified that the persistent and runtime `splits.csv` files have matching SHA-256 hashes.
+- Evaluated the currently saved baseline CNN checkpoint on 716 validation images only.
+- Validation accuracy: 0.8953.
+- Validation precision: 0.9933.
+- Validation recall: 0.8599.
+- Validation F1-score: 0.9218.
+- Validation AUC: 0.9857.
+- Confusion matrix: TN=199, FP=3, FN=72, TP=442.
+- Saved validation metrics to `artifacts/metrics/day8_validation_metrics.json`.
+- Created `docs/experiments.md` to document experiment results.
+- Checkpoint provenance remains uncertain because subsequent unlogged training runs may have overwritten the original Day 7 checkpoint.
+- Test cohorts remain untouched. Threshold selection, calibration, and triage band selection remain pending.
+
+
+## Day 9 — Baseline CNN: Learning-Rate Experiment
+
+- **Change:** Adam learning rate reduced from 1e-3 to 3e-4.
+- **Training:** 15 epochs completed; best epoch was 14, selected by validation AUC.
+- **Best validation AUC:** 0.9628.
+- **Epoch 14 validation metrics:** accuracy 0.9022, precision 0.9684,
+  recall 0.8930, loss 0.2282.
+- **Diagnosis:** Training loss decreased, but validation metrics fluctuated
+  substantially between epochs.
+- **Outcome:** Improvement over the historical baseline is not established.
+- **Provenance issue:** The Day 9 run overwrote the Day 7 checkpoint and
+  training log. Recovery copies are identical to the current files, so the
+  original baseline artifacts have not been recovered.
+- **Data integrity:** `splits.csv` remains unchanged. Test cohorts were not
+  used for model selection.
+- **Next:** Begin Day 10 prerequisites for MobileNetV2 transfer learning.
+
+ChestScan is an experimental screening aid, not a diagnostic tool.
+
+
+### Day 11 — MobileNetV2 Phase 2 Fine-Tuning
+
+- Loaded the Phase 1 checkpoint and fine-tuned the top MobileNetV2 layers using learning rate `1e-5`, keeping Batch Normalization layers frozen.
+- Used class weights and patient-level training/validation partitions.
+- Early stopping triggered at epoch 12 and restored in-memory weights from epoch 8.
+- Best recorded validation recall: **0.9805**.
+- Best recorded validation accuracy: **0.9777**.
+- Best recorded validation AUC: **0.9973** (epoch 5).
+- Lowest recorded validation loss: **0.0614** (epoch 8).
+- Checkpoint: `artifacts/models/mobilenetv2_phase2_v1_best.keras`
+- Log: `artifacts/logs/mobilenetv2_phase2_v1.csv`
+- Test set remains untouched. No final model selected.
+- Pending: independent checkpoint and log verification.
+- Medical-safety note: ChestScan is a screening aid, not a diagnostic tool.
+
+### Day 17 — Error Analysis and Triage Evaluation
+
+**Status:** Complete
+
+**Work performed**
+- Built a case-level audit table from the frozen Day 16 predictions for all 624 test images.
+- Inspected false negatives, false positives, and representative uncertain-band cases.
+- Calculated uncertain-band error capture separately for `test_full` and `test_clean`.
+- Recorded findings and limitations in `artifacts/evaluation/day17_error_analysis.md`.
+- Saved the complete case-level table to `artifacts/evaluation/day17_case_audit.csv`.
+
+**Results**
+- Full test: 11 false negatives, 50 false positives, 61 total errors.
+- Clean test: 1 false negative, 50 false positives, 51 total errors.
+- Full-test uncertain-band error capture: 21/61 (34.43%).
+- Clean-test uncertain-band error capture: 21/51 (41.18%).
+- The uncertain band captured no false negatives in the full-test cohort.
+- ECE was 0.1310 on the full test and 0.2876 on the clean subset.
+
+**Limitations**
+- The uncertain band does not capture all classification errors.
+- High-confidence false positives and false negatives remain.
+- The clean cohort is smaller and class-imbalanced.
+- Filename-derived identifier overlap indicates a leakage risk but does not prove that leakage caused all observed performance differences.
+- ChestScan remains a screening aid, not a diagnostic tool.
+
+**Integrity**
+- Model checkpoint, decision threshold (0.905344), and uncertain-band bounds (0.830344–0.980344) remain frozen.
+- No retraining or test-driven tuning was performed.
+
+**Next:** Begin Day 18 Grad-CAM explainability as a stretch goal, while protecting the remaining API, UI, deployment, and documentation schedule.
+
+### Day 19 — Grad-CAM Review and Application Handoff
+
+**Status:** Grad-CAM investigation complete; application handoff in progress.
+
+**Findings**
+- Grad-CAM maps were finite and non-zero, but did not convincingly
+  demonstrate lung-focused attention.
+- These visual findings do not prove shortcut learning.
+- Findings were documented in
+  `artifacts/gradcam_day18_19_findings.md`.
+- Local `backend/`, `frontend/`, and `tests/` directories exist but
+  contain no files.
+- The local repository does not contain the model checkpoint or
+  `config.json`; their availability in the model environment must
+  be verified before API inference is implemented.
+
+**Integrity**
+- Preserve the frozen checkpoint, decision threshold, and uncertain
+  band. No retraining or threshold changes authorized.
+- ChestScan remains a screening aid, not a diagnostic tool.
+
+**Next:** Begin Stage 6 prerequisites and verify model access before
+implementing the first backend component.
+
+Day 20: Implemented and smoke-tested the frozen MobileNetV2 inference component. Verified checkpoint checksum, configuration, model loading, embedded preprocessing, prediction output, corrupt-image rejection, and syntax compilation. Real-image parity remains unverified; no model or threshold changes.
+
+
+## Day 21 — Backend API Foundations
+
+**Objective:** Implement a FastAPI backend for ChestScan using the frozen MobileNetV2 model and existing inference pipeline.
+
+### Implementation
+- Created `backend/main.py` with FastAPI application and lifecycle management.
+- Loaded the frozen model and configuration at startup using `load_config()` and TensorFlow Keras.
+- Implemented `GET /health` to report API status and model availability.
+- Implemented `POST /predict` accepting JPEG and PNG uploads through the `file` field.
+- Added a 5 MB upload limit and validation for empty files, unsupported media types, corrupt images, and mismatches between declared and actual image formats.
+- Added CORS configuration for the frontend at `http://localhost:5173`.
+- Added structured prediction responses containing the predicted class, pneumonia probability, decision threshold, uncertainty band, inference time, and medical disclaimer.
+- Added error handling for invalid uploads and inference failures.
+
+### Verification
+- Python syntax compilation and API import checks passed.
+- Model loaded successfully during Uvicorn startup.
+- `/health` returned HTTP 200 with `{"status":"ok","model_loaded":true}`.
+- Synthetic PNG prediction returned HTTP 200 with the expected response fields.
+- Unsupported media type returned HTTP 415.
+- Corrupt image and mismatched image format returned HTTP 400.
+- Oversized upload returned HTTP 413.
+- Repeated valid PNG prediction after the validation fix returned HTTP 200.
+
+### Notes and Limitations
+- Synthetic images were used for API smoke testing because no local chest X-ray images were available. Their predictions have no clinical meaning.
+- Real-image inference parity with the notebook and automated API regression tests remain pending.
+- The frozen model, decision threshold (`0.905344`), and uncertainty band (`0.830344`–`0.980344`) were not changed.
+
+**Status:** Day 21 implementation and manual API smoke tests completed. Automated regression testing is planned for Day 22.
+
+**Disclaimer:** Screening aid only. Not a medical diagnosis.
