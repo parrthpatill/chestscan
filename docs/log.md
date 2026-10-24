@@ -374,3 +374,39 @@ Day 20: Implemented and smoke-tested the frozen MobileNetV2 inference component.
 - Existing Starlette/httpx deprecation warning remains non-blocking.
 - **Limitations:** Parity was verified on one sample image only; full test-set parity has not been established. Existing evaluation limitations, including potential dataset overlap and unvalidated clinical performance, remain.
 - **Status:** Backend regression tests pass. Ready for final change review and commit.
+
+## Day 24 — Frontend Integration
+
+**Stage 7: Frontend**
+
+### Completed
+- Integrated the React frontend with the FastAPI `/predict` endpoint using `fetch` and `FormData`.
+- Implemented image upload and preview.
+- Added client-side validation for JPEG/PNG images and the 5 MB size limit.
+- Implemented loading and request-error states.
+- Added a prediction result card displaying the predicted label, confidence, pneumonia probability, threshold, uncertain-band bounds, and inference time.
+- Added distinct styling for uncertain results.
+- Removed the duplicate disclaimer and retained the required disclaimer: **“Screening aid only. Not a medical diagnosis.”**
+- Added responsive styling for the result card and related UI elements.
+
+### Verification
+- Backend health endpoint returned `{"status":"ok","model_loaded":true}`.
+- Visually verified a normal prediction result in the frontend.
+- `npm run lint` passed.
+- `npm run build` passed; Vite generated the production build successfully.
+
+### Limitations / Pending Checks
+- An actual uncertain prediction response has not yet been tested in the frontend.
+- All request-error scenarios have not been individually verified.
+- The local test images referenced by the evaluation manifest were unavailable at their recorded paths.
+- Deployment has not been started.
+
+### Project Constraints
+- Model remains MobileNetV2.
+- Decision threshold remains `0.905344`.
+- Uncertain triage band remains `0.830344–0.980344`.
+- No model retraining or threshold changes were made.
+- The required screening disclaimer remains unchanged.
+
+### Status
+**Day 24 frontend integration implemented; lint, build, backend health, and normal-result rendering verified.**

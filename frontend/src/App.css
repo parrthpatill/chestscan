@@ -1,0 +1,387 @@
+
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-header {
+  min-height: 72px;
+  padding: 0 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #e5eaf0;
+  background: #fff;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #17324d;
+  font-size: 20px;
+  font-weight: 750;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #176b67;
+  color: #fff;
+  font-size: 19px;
+}
+
+.header-label {
+  color: #66768a;
+  font-size: 13px;
+}
+
+.main-content {
+  width: min(100% - 40px, 760px);
+  margin: 0 auto;
+  padding: 66px 0 52px;
+  flex: 1;
+}
+
+.intro {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: #176b67;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 1.5px;
+}
+
+.intro h1 {
+  margin: 0;
+  color: #172d45;
+  font-size: clamp(29px, 5vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -1.2px;
+}
+
+.intro-copy {
+  margin: 14px 0 0;
+  color: #68798d;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.upload-card {
+  padding: 42px 32px;
+  border: 1.5px dashed #cbd7e2;
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.upload-card.is-dragging {
+  border-color: #176b67;
+  background: #f0f9f7;
+}
+
+.upload-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 20px;
+  border-radius: 18px;
+  background: #eaf5f3;
+  color: #176b67;
+}
+
+.upload-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.upload-card h2 {
+  margin: 0;
+  color: #20364d;
+  font-size: 21px;
+  letter-spacing: -0.4px;
+}
+
+.upload-description {
+  max-width: 390px;
+  margin: 12px auto 24px;
+  color: #68798d;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.primary-button {
+  border: 1px solid #176b67;
+  background: #176b67;
+  color: #fff;
+}
+
+.primary-button:hover {
+  background: #115650;
+}
+
+.secondary-button {
+  border: 1px solid #d6e0e8;
+  background: #fff;
+  color: #344b60;
+}
+
+.secondary-button:hover {
+  background: #f4f7f9;
+}
+
+.primary-button:focus-visible,
+.secondary-button:focus-visible {
+  outline: 3px solid #9bd7d0;
+  outline-offset: 3px;
+}
+
+.file-hint {
+  margin: 16px 0 0;
+  color: #8290a0;
+  font-size: 12px;
+}
+
+.error-message {
+  margin: 20px 0 0;
+  color: #b42318;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.preview-panel {
+  text-align: left;
+}
+
+.preview-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.preview-heading .eyebrow {
+  margin-bottom: 6px;
+}
+
+.image-preview {
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  max-height: 440px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #111827;
+}
+
+.image-preview img {
+  display: block;
+  width: 100%;
+  max-height: 440px;
+  object-fit: contain;
+}
+
+.file-name {
+  margin: 16px 0 0;
+  overflow-wrap: anywhere;
+  color: #344b60;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.preview-panel .file-hint {
+  margin-top: 5px;
+}
+
+.ready-message {
+  margin: 18px 0 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #f0f5f9;
+  color: #42576b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.disclaimer {
+  margin: 22px 0 0;
+  color: #53677b;
+  font-size: 12px;
+  text-align: center;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 7%;
+  border-top: 1px solid #e5eaf0;
+  color: #8290a0;
+  font-size: 12px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 560px) {
+  .site-header {
+    min-height: 64px;
+    padding: 0 20px;
+  }
+
+  .header-label {
+    max-width: 120px;
+    font-size: 11px;
+    text-align: right;
+  }
+
+  .main-content {
+    width: min(100% - 28px, 760px);
+    padding-top: 42px;
+  }
+
+  .upload-card {
+    padding: 30px 18px;
+  }
+
+  .preview-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .site-footer {
+    padding: 18px 20px;
+    font-size: 11px;
+  }
+}
+
+
+/* Screening result */
+.result-card {
+  margin-top: 24px;
+  padding: 28px;
+  border: 1px solid #d8e5e3;
+  border-radius: 16px;
+  background: #f5faf9;
+  color: #20364d;
+  overflow-wrap: anywhere;
+}
+
+.result-card h2 {
+  margin: 0 0 16px;
+  color: #17324d;
+  font-size: clamp(20px, 4vw, 26px);
+  line-height: 1.35;
+}
+
+.result-card p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.result-card .eyebrow {
+  font-size: 11px;
+}
+
+.result-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  color: #53677b;
+  font-size: 14px;
+}
+
+.result-metric strong {
+  color: #20364d;
+  font-size: 17px;
+}
+
+.confidence-track {
+  height: 8px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e1e8ed;
+}
+
+.confidence-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #176b67;
+  transition: width 200ms ease;
+}
+
+/* An uncertain result must not look like a confident classification. */
+.result-card.result-uncertain {
+  border-color: #d7d3c7;
+  background: #f7f6f2;
+}
+
+.result-uncertain .eyebrow {
+  color: #756748;
+}
+
+.result-uncertain h2,
+.result-uncertain .result-metric strong {
+  color: #514a3d;
+}
+
+.result-uncertain .confidence-fill {
+  background: #9a8d70;
+}
+
+.result-card .disclaimer {
+  margin-top: 20px;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (max-width: 560px) {
+  .result-card {
+    padding: 22px 18px;
+  }
+}
