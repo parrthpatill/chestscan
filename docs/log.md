@@ -361,3 +361,16 @@ Day 20: Implemented and smoke-tested the frozen MobileNetV2 inference component.
 **Status:** Day 21 implementation and manual API smoke tests completed. Automated regression testing is planned for Day 22.
 
 **Disclaimer:** Screening aid only. Not a medical diagnosis.
+
+### Day 22 — Backend API Regression Testing
+
+- Verified that the configured checkpoint SHA-256 matches the actual frozen model file.
+- Updated `backend/inference.py` preprocessing to match the TensorFlow evaluation pipeline used in the notebook.
+- Added `tests/test_inference_parity.py` to compare real-model API predictions against an independently computed TensorFlow reference.
+- Ran the complete test suite: **7 passed, 0 failed**.
+- Verified probability parity on one sample image within an absolute tolerance of `1e-5`.
+- Confirmed the model checkpoint, decision threshold (`0.905344`), and uncertainty band (`0.830344–0.980344`) remain unchanged.
+- Updated `.gitignore` to exclude the local sample image and downloaded notebook.
+- Existing Starlette/httpx deprecation warning remains non-blocking.
+- **Limitations:** Parity was verified on one sample image only; full test-set parity has not been established. Existing evaluation limitations, including potential dataset overlap and unvalidated clinical performance, remain.
+- **Status:** Backend regression tests pass. Ready for final change review and commit.

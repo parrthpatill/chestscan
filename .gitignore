@@ -21,3 +21,7 @@ htmlcov/
 .idea/
 .DS_Store
 /artifacts/models/*.keras
+
+# Local ChestScan parity-test artifacts
+/sample_chest_xray.jpeg
+/notebooks/chestscan_latest_from_colab.ipynb

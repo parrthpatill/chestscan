@@ -1,6 +1,6 @@
 
 """ChestScan inference: artifact and configuration validation."""
-
+import tensorflow as tf
 import hashlib
 import json
 from pathlib import Path
@@ -52,18 +52,34 @@ import numpy as np
 from PIL import Image, UnidentifiedImageError
 
 
+
 def preprocess(image_bytes: bytes) -> np.ndarray:
-    """Decode image bytes into one RGB model input batch."""
+    """Decode and resize an image using the notebook's preprocessing."""
     try:
+        # Identify the format while preserving the original image bytes.
         with Image.open(io.BytesIO(image_bytes)) as image:
-            image = image.convert("RGB")
-            image = image.resize((224, 224), Image.Resampling.BILINEAR)
-            pixels = np.asarray(image, dtype=np.float32)
-    except (UnidentifiedImageError, OSError, ValueError) as exc:
+            image_format = image.format
+
+        # Match src/data.py's JPEG decoder; retain PNG API support.
+        if image_format == "JPEG":
+            image = tf.io.decode_jpeg(image_bytes, channels=3)
+        elif image_format == "PNG":
+            image = tf.io.decode_png(image_bytes, channels=3)
+        else:
+            raise ValueError("Unsupported image format.")
+
+        # Match the notebook: resize, then cast to float32.
+        image = tf.image.resize(image, (224, 224))
+        image = tf.cast(image, tf.float32)
+
+        pixels = image.numpy()
+
+    except (UnidentifiedImageError, OSError, ValueError, tf.errors.InvalidArgumentError) as exc:
         raise ValueError("Uploaded content is not a valid image.") from exc
 
-    # The model contains its own Rescaling layer: do not normalize here.
+    # The model contains its own rescaling layer; do not normalize here.
     return np.expand_dims(pixels, axis=0)
+
 
 def predict(image_bytes: bytes, model, config: dict) -> dict:
     """Run frozen-model inference and apply saved screening thresholds."""
