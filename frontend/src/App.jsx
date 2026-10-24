@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import sampleChestXray from './assets/samples/sample_chest_xray.jpeg'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png']
@@ -49,6 +50,27 @@ function App() {
 
     setFile(selectedFile)
     setPreview(URL.createObjectURL(selectedFile))
+  }
+
+  function loadSampleImage() {
+    fetch(sampleChestXray)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Could not load the sample image.')
+        }
+        return response.blob()
+      })
+      .then((blob) => {
+        const sampleFile = new File(
+          [blob],
+          'sample_chest_xray.jpeg',
+          { type: 'image/jpeg' },
+        )
+        selectFile(sampleFile)
+      })
+      .catch(() => {
+        setError('Could not load the sample image. Please upload an image instead.')
+      })
   }
 
   function clearFile() {
@@ -115,6 +137,7 @@ function App() {
   }
 
   const isUncertain = result?.confidence_band === 'Uncertain'
+  const isPneumonia = result?.prediction === 'PNEUMONIA'
 
   return (
     <main className="app-shell">
@@ -129,9 +152,12 @@ function App() {
       <section className="main-content">
         <div className="intro">
           <p className="eyebrow">AI-ASSISTED SCREENING</p>
-          <h1>Chest X-ray screening</h1>
+          <h1>
+            Chest X-ray <em>screening</em>
+          </h1>
           <p className="intro-copy">
-            Upload a chest X-ray image for a model-generated screening result.
+            A research-led screening interface for chest X-ray analysis.
+            Upload an image to review the model's prediction and confidence.
           </p>
         </div>
 
@@ -178,6 +204,18 @@ function App() {
               </button>
 
               <p className="file-hint">JPG or PNG · Maximum 5 MB</p>
+
+              <div className="sample-action">
+                <span>OR</span>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={loadSampleImage}
+                  disabled={isLoading}
+                >
+                  Try sample image
+                </button>
+              </div>
             </>
           ) : (
             <div className="preview-panel">
@@ -240,7 +278,13 @@ function App() {
 
         {result && (
           <section
-            className={`result-card ${isUncertain ? 'result-uncertain' : ''}`}
+            className={`result-card ${
+                isUncertain
+                  ? 'result-uncertain'
+                  : isPneumonia
+                    ? 'result-abnormal'
+                    : 'result-normal'
+              }`}
             aria-live="polite"
             aria-labelledby="result-heading"
           >
@@ -299,6 +343,45 @@ function App() {
             )}
           </section>
         )}
+
+        
+      <section className="how-it-works" aria-labelledby="how-heading">
+        <div className="section-heading">
+          <p className="eyebrow">A SIMPLE PROCESS</p>
+          <h2 id="how-heading">From image to insight</h2>
+        </div>
+
+        <div className="steps-grid">
+          <article className="step-item">
+            <span className="step-number">01</span>
+            <h3>Upload</h3>
+            <p>Select a JPG or PNG chest X-ray image to begin.</p>
+          </article>
+
+          <article className="step-item">
+            <span className="step-number">02</span>
+            <h3>Analyse</h3>
+            <p>The model processes the image and returns its screening output.</p>
+          </article>
+
+          <article className="step-item">
+            <span className="step-number">03</span>
+            <h3>Review</h3>
+            <p>Review the prediction, confidence, and triage status carefully.</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="responsible-use" aria-labelledby="responsible-heading">
+        <p className="eyebrow">IMPORTANT TO KNOW</p>
+        <h2 id="responsible-heading">Designed to support review, not replace it.</h2>
+        <p>
+          ChestScan provides a model-generated screening result for research and
+          educational use. Predictions can be incorrect, and confidence is not a
+          measure of clinical certainty. Do not use this tool as a substitute for
+          professional medical assessment.
+        </p>
+      </section>
 
         <p className="disclaimer">{DISCLAIMER}</p>
       </section>
